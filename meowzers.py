@@ -12,8 +12,6 @@ API_KEY = os.environ.get("API_KEY")
 def create_directory(name):
     """Checks if the directory exists and then creates it if it doesn't"""
     directory_name = name
-    if not os.path.exists(directory_name):
-        os.mkdir(directory_name)
     return directory_name
 
 def get_cat_url():
@@ -24,20 +22,19 @@ def get_cat_url():
     content = json.loads(response.content)[0]
     return content['url']
 
-def download_cat(cat, download_location=os.getcwd()):
+def download_cat(cat):
     response = requests.get(cat)  # gets file data in binary form
-    today = str(datetime.datetime.now().strftime("%Y%m%d"))
+    today = str(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
     filename = today + ".jpg"
-    filepath = os.path.join(download_location, filename)
+    filepath = os.path.join('cats', filename)
     with open(filepath, "wb") as file:
         file.write(response.content)
 
 def main():
     cat = get_cat_url()
-    data_directory = create_directory('data')
-    download_cat(cat, data_directory)
-    print(cat)
-    print(os.getcwd())
+    if not os.path.exists('cats'):
+        os.mkdir('cats')
+    download_cat(cat)
 
 if __name__ == "__main__":
     main()
