@@ -8,11 +8,10 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 API_KEY = os.environ.get("API_KEY")
+if not API_KEY:
+    print("Could not find a valid api key. Exiting...")
+    exit(1)
 
-def create_directory(name):
-    """Checks if the directory exists and then creates it if it doesn't"""
-    directory_name = name
-    return directory_name
 
 def get_cat_url():
     """Scrapes the urls of images from a webpage."""
