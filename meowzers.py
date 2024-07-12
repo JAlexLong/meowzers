@@ -4,7 +4,6 @@ import os
 import requests
 import datetime
 from dotenv import load_dotenv, find_dotenv
-from pathlib import Path
 
 load_dotenv(find_dotenv())
 
@@ -25,18 +24,20 @@ def get_cat_url():
     content = json.loads(response.content)[0]
     return content['url']
 
-def download_cat(cat, directory_name):
-    for i, url in enumerate(cat):
-        response = requests.get(url)  # gets file data in binary form
+def download_cat(cat, download_location=os.getcwd()):
+    response = requests.get(cat)  # gets file data in binary form
     today = str(datetime.datetime.now().strftime("%Y%m%d"))
     filename = today + ".jpg"
-    filepath = os.path.join(directory_name, filename)
+    filepath = os.path.join(download_location, filename)
     with open(filepath, "wb") as file:
         file.write(response.content)
 
-def main(debug=False):
-    cat_url = get_cat_url()
-    print(cat_url)
+def main():
+    cat = get_cat_url()
+    data_directory = create_directory('data')
+    download_cat(cat, data_directory)
+    print(cat)
+    print(os.getcwd())
 
 if __name__ == "__main__":
-    main(debug=True)
+    main()
