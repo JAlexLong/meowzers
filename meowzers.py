@@ -4,6 +4,7 @@ import os
 import requests
 import datetime
 from dotenv import load_dotenv, find_dotenv
+from PIL import Image
 
 load_dotenv(find_dotenv())
 
@@ -21,19 +22,27 @@ def get_cat_url():
     content = json.loads(response.content)[0]
     return content['url']
 
-def download_cat(cat):
+def download_cat(cat):  # add -> os.Path to return name of file
     response = requests.get(cat)  # gets file data in binary form
     today = str(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
     filename = today + ".jpg"
     filepath = os.path.join('cats', filename)
     with open(filepath, "wb") as file:
         file.write(response.content)
+    return filename
+
+def show_cat(cat):
+    catname = 'cats/'+cat
+    image = Image.open(catname)
+    image.show()
+    return True
 
 def main():
     cat = get_cat_url()
     if not os.path.exists('cats'):
         os.mkdir('cats')
-    download_cat(cat)
+    cat_filename = download_cat(cat)
+    show_cat(cat_filename)
 
 if __name__ == "__main__":
     main()
